@@ -23,7 +23,10 @@ resource "aws_instance" "web" {
   availability_zone = var.availability_zone
   key_name = var.key_name
   security_groups = [ aws_security_group.allow_ssh.name ]
-  user_data = data.cloudinit_config.userdata.rendered
+  #user_data = data.template_file.user_data.rendered
+  user_data = templatefile("${path.module}/userdata.yml", {
+    devnames = join(" ", local.device_names)
+    })
 
   #user_data = templatefile("${path.module}/nvme-to-block-mapping.sh", {
   #devnames = join(" ", local.device_names)
@@ -33,22 +36,9 @@ resource "aws_instance" "web" {
   }
 }
 
-data "cloudinit_config" "userdata" {
-  gzip          = false
-  base64_encode = false
-
-  part {
-    content_type = "text/cloud-config"
-    filename     = "cloud-config.yaml"
-    content      = local.cloud_config_config
-  }
-
-  part {
-    content_type = "text/x-shellscript"
-    filename     = "nvme-to-block-mapping.sh"
-    content  = filebase64("${path.module}/nvme-to-block-mapping.sh")
-  }
-}
+#data "template_file" "user_data" {
+#  template = file("./userdata.yml")
+#}
 
 resource "aws_ebs_volume" "this" {
   for_each = var.ebs_volumes
@@ -99,3 +89,20 @@ data "aws_ami_ids" "sben_amis" {
   }
 }
 
+
+#data "cloudinit_config" "userdata" {
+#  gzip          = false
+#  base64_encode = false
+#
+#  part {
+#    content_type = "text/cloud-config"
+#    filename     = "cloud-config.yaml"
+#    content      = local.cloud_config_config
+#  }
+#
+#  part {
+#    content_type = "text/x-shellscript"
+#    filename     = "nvme-to-block-mapping.sh"
+#    content  = filebase64("${path.module}/nvme-to-block-mapping.sh")
+#  }
+#}
