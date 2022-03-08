@@ -3,7 +3,6 @@ data "aws_ami" "redhat" {
   filter {
     name   = "name"
     values = ["RHEL-8.4.0_HVM-*-x86_64-2-Hourly2-GP2*"]
-    #values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
   filter {
     name   = "virtualization-type"
@@ -23,22 +22,13 @@ resource "aws_instance" "web" {
   availability_zone = var.availability_zone
   key_name = var.key_name
   security_groups = [ aws_security_group.allow_ssh.name ]
-  #user_data = data.template_file.user_data.rendered
   user_data = templatefile("${path.module}/userdata.yml", {
     devnames = join(" ", local.device_names)
     })
-
-  #user_data = templatefile("${path.module}/nvme-to-block-mapping.sh", {
-  #devnames = join(" ", local.device_names)
-  #})
  tags = {
     Name = "sben_test"
   }
 }
-
-#data "template_file" "user_data" {
-#  template = file("./userdata.yml")
-#}
 
 resource "aws_ebs_volume" "this" {
   for_each = var.ebs_volumes
