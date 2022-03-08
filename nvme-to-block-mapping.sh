@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-device_names=(${devnames})
+device_names=("/dev/sda1" "/dev/xvde")
+#device_names=(${devnames})
 
 for i in `seq 0 26`; do
     nvme_block_device="/dev/nvme$${i}n1"

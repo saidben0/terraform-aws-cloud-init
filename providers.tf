@@ -4,10 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 3.27"
     }
-    #cloudinit = {
-    #  source = "hashicorp/cloudinit"
-    #  version = "2.2.0"
-    #}
+    cloudinit = {
+      source = "hashicorp/cloudinit"
+      version = "2.2.0"
+    }
   }
 
   required_version = ">= 0.14.9"
@@ -18,6 +18,6 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-#provider "cloudinit" {
-#  # Configuration options
-#}
+provider "cloudinit" {
+  # Configuration options
+}

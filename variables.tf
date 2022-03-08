@@ -41,6 +41,22 @@ variable "ebs_volumes" {
     }
   }
 }
+
 locals {
   device_names = ([ for key, value in var.ebs_volumes: value.device_name ])
+  cloud_config_config = <<-END
+    #cloud-config
+    ${jsonencode({
+      write_files = [
+        {
+          path        = "/usr/tmp/nvme-to-block-mapping.sh"
+          permissions = "0744"
+          owner       = "root:root"
+          encoding    = "b64"
+          content     = filebase64("${path.module}/nvme-to-block-mapping.sh")
+        },
+      ]
+    })}
+  END
 }
+
